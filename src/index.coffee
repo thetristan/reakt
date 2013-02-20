@@ -1,7 +1,10 @@
 watch = require('watch')
 child = require('child_process')
 
-module.exports = observer = (path, command) ->
+module.exports = observer = (path, fullCommand) ->
+  args = fullCommand.split(' ')
+  command = args.shift()
+
   class Observer
 
     start: ->
@@ -25,9 +28,7 @@ module.exports = observer = (path, command) ->
       console.log(message)
 
     runCommand: ->
-      @log "\nRunning `#{command}`..."
-      args = command.split(' ')
-      cmd = args.shift()
-      child.spawn(cmd, args, stdio: 'inherit')
+      @log "\nRunning `#{fullCommand}`..."
+      child.spawn(command, args, stdio: 'inherit')
 
   new Observer()
