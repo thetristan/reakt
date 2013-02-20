@@ -6,7 +6,6 @@ all: $(JS)
 lib/%.js : src/%.coffee
 	./node_modules/.bin/coffee --compile --lint --output lib $<
 
-
 .PHONY: test
 
 test : $(JS)
