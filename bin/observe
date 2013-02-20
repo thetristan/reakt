@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-observer = require('../lib');
+observe = require('../lib');
 
 var command = process.argv.slice(2).join(' ');
 var workingDirectory = process.cwd();
 
-observer(workingDirectory, command).observe();
+observe(workingDirectory, command).start();

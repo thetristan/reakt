@@ -3,22 +3,31 @@ child = require('child_process')
 
 module.exports = observer = (path, command) ->
   class Observer
-    observe: ->
-      watch.watchTree(path, @onChange)
 
-    parseFiles: (files) ->
-      files = "- " + Object.keys(files).join("\n- ") unless String == files.constructor
-      files
+    start: ->
+      watch.watchTree(path, @onChange)
 
     onChange: (files) =>
       files = @parseFiles(files)
-      console.log "Change detected to:\n- #{files}"
+      @log "\nChange detected to:\n#{files}"
       @runCommand()
 
+    parseFiles: (files) ->
+      if String == files.constructor
+        files = [files]
+      else
+        files = Object.keys(files)
+      files = files.map (file) -> file.replace(path,'') || '/'
+      files = files.join("\n- ")
+      "- #{files}"
+
+    log: (message) ->
+      console.log(message)
+
     runCommand: ->
-      console.log "Running #{command}"
+      @log "\nRunning `#{command}`..."
       args = command.split(' ')
       cmd = args.shift()
       child.spawn(cmd, args, stdio: 'inherit')
 
-  return new Observer()
+  new Observer()

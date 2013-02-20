@@ -3,19 +3,19 @@ child = require('child_process')
 watch = require('watch')
 spy = require('bondjs')
 
-observer = require('./')
+observe = require('./')
 
-describe 'observer', ->
+describe 'observe', ->
 
   beforeEach ->
+    @subject = observe("/foo/bar", 'ls ..')
     # Silence is golden
-    spy(console, 'log').return()
-    @subject = observer("/foo/bar", 'ls ..')
+    spy(@subject, 'log').return()
 
-  describe 'observe', ->
+  describe 'start', ->
     it 'sets a watcher on the provided path', ->
       spy(watch, 'watchTree').return()
-      @subject.observe()
+      @subject.start()
 
       [path, cb] = watch.watchTree.calledArgs[0]
       equal path, "/foo/bar"
@@ -30,7 +30,7 @@ describe 'observer', ->
     context 'when called with a string', ->
       it 'returns the original string', ->
         result = @subject.parseFiles('foo')
-        equal result, 'foo'
+        equal result, '- foo'
 
   describe 'onChange', ->
     it 'foos', ->
