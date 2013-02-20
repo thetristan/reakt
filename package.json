@@ -1,0 +1,20 @@
+{
+  "author": "",
+  "name": "observe",
+  "description": "CLI tool to watch files/directories and run a command on changes",
+  "version": "0.0.1",
+  "bin":{"observe": "./bin/observe"},
+  "dependencies": {
+    "watch": "~0.5.1",
+    "commander": "~1.1.1"
+  },
+  "devDependencies": {
+    "coffee-script": "~1.4.0",
+    "mocha": "~1.8.1",
+    "bondjs": "0.0.11"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
