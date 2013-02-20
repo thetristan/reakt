@@ -1,7 +1,7 @@
 watch = require('watch')
 child = require('child_process')
 
-module.exports = observer = (path, fullCommand) ->
+module.exports = (path, fullCommand) ->
   args = fullCommand.split(' ')
   command = args.shift()
 
