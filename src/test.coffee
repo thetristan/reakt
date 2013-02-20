@@ -9,6 +9,7 @@ describe 'observe', ->
 
   beforeEach ->
     @subject = observe("/foo/bar", 'ls ..')
+
     # Silence is golden
     spy(@subject, 'log').return()
 
@@ -44,8 +45,9 @@ describe 'observe', ->
       @subject.runCommand()
 
       [cmd, args, opts] = child.spawn.calledArgs[0]
-      equal cmd, 'ls'
-      equal args[0], '..'
+      equal cmd, 'sh'
+      equal args[0], '-c'
+      equal args[1], 'ls ..'
       equal opts.stdio, 'inherit'
 
 
