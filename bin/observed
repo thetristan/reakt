@@ -13,6 +13,7 @@ commander.version('0.0.1')
 var cwd = process.cwd();
 var command = commander.args.join(' ');
 var options = {
+  longRunning: true,
   exclude: commander.invert,
   include: commander.grep
 };

@@ -3,8 +3,16 @@
 , "name": "observe"
 , "description": "A tool for observing file directories and acting on changes"
 , "version": "0.0.1"
-, "bin":{ "observe": "./bin/observe" }
-, "dependencies": { "watch": "~0.5.1" }
+, "bin":
+  {
+    "observe": "./bin/observe"
+  , "observed": "./bin/observed"
+  }
+, "dependencies":
+  {
+    "watch": "~0.5.1"
+  , "commander": "*"
+  }
 , "devDependencies":
   {
     "coffee-script": "~1.4.0"
