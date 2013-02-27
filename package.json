@@ -1,21 +1,22 @@
-{
-  "author": "Tristan Blease"
-, "name": "observe"
-, "description": "A tool for observing file directories and acting on changes"
+{ "author": "Tristan Blease"
+, "name": "reakt"
+, "description": "A tool for observing file trees and acting on changes"
 , "version": "0.0.1"
+, "repository":
+  { "type": "git"
+  , "url": "https://github.com/thetristan/reakt"
+  }
 , "bin":
-  {
-    "observe": "./bin/observe"
-  , "observed": "./bin/observed"
+  { "reakt": "./bin/reakt"
+  , "reaktd": "./bin/reaktd"
   }
 , "dependencies":
-  {
-    "watch": "~0.5.1"
+  { "watch": "~0.5.1"
+  , "underscore": "~1.4.4"
   , "commander": "*"
   }
 , "devDependencies":
-  {
-    "coffee-script": "~1.4.0"
+  { "coffee-script": "~1.4.0"
   , "mocha": "~1.8.1"
   , "bondjs": "0.0.11"
   }

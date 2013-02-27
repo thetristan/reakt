@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 var commander = require('commander');
-var observe = require('../lib');
+var reakt = require('../lib');
 
 commander.version('0.0.1')
   .usage('[options] <command>')
-  .description('tool for observing file directories and acting on change')
+  .description('tool for observing file directories and reacting to changes')
   .option('-g, --grep [pattern]', 'run <command> when files matching [pattern] change')
   .option('-v, --invert [pattern]', 'do not run <command> if files matching [pattern] change')
   .parse(process.argv);
@@ -13,8 +13,14 @@ commander.version('0.0.1')
 var cwd = process.cwd();
 var command = commander.args.join(' ');
 var options = {
+  longRunning: true,
   exclude: commander.invert,
   include: commander.grep
 };
 
-observe(cwd, command, options).start();
+if (!command) {
+  console.log(commander.help());
+  process.exit(1);
+}
+
+reakt(cwd, command, options).start();
