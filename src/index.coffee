@@ -1,6 +1,6 @@
 watch = require('watch')
 childProcess = require('child_process')
-{wrap, map, flatten, compact, isString, keys} = require('underscore')
+{after, wrap, map, flatten, compact, isString, keys} = require('underscore')
 
 LINE_PREFIX = "---"
 
@@ -31,6 +31,8 @@ module.exports = (path, command, options = {}) ->
 
       @process = null
       @startProcess = @processRestarter(@startProcess) if longRunning
+
+      @onChange = after(2, @onChange)
 
       watch.watchTree(path, @onChange)
 
@@ -74,6 +76,7 @@ module.exports = (path, command, options = {}) ->
       @process.kill()
 
     onProcessExit: (code = 0) =>
+      @log ""
       @log "PID #{@process?.pid} exited with #{code}"
       @log ""
       @process = null
