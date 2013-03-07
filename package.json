@@ -1,7 +1,7 @@
 { "author": "Tristan Blease"
 , "name": "reakt"
 , "description": "A tool for observing file trees and acting on changes"
-, "version": "0.0.2"
+, "version": "0.0.3"
 , "repository":
   { "type": "git"
   , "url": "https://github.com/thetristan/reakt"
