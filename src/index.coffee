@@ -29,8 +29,9 @@ module.exports = (path, command, options = {}) ->
       @log "Include files matching: /#{include}/" if include?
       @log "Exclude files matching: /#{exclude}/" if exclude?
 
-      @process = null
-      @startProcess = @processRestarter(@startProcess) if longRunning
+      if longRunning
+        @process = @startProcess()
+        @startProcess = @processRestarter(@startProcess)
 
       @onChange = after(2, @onChange)
 
@@ -67,18 +68,13 @@ module.exports = (path, command, options = {}) ->
 
     processRestarter: (startFn) ->
       =>
-        @killProcess() if @process?
-        @process = startFn()
-        @process.on('exit', @onProcessExit)
+        @process.on 'exit', (code) =>
+          @log ""
+          @log "PID #{@process.pid} exited with #{code}"
+          @log ""
+          @process = startFn()
 
-    killProcess: ->
-      @log "Killing process with PID #{@process.pid}"
-      @process.kill()
-
-    onProcessExit: (code = 0) =>
-      @log ""
-      @log "PID #{@process?.pid} exited with #{code}"
-      @log ""
-      @process = null
+        @log "Killing process with PID #{@process.pid} and its children."
+        childProcess.exec("""kill `pstree -p #{@process.pid} | sed 's/(/\\n(/g' | grep '(' | sed 's/(\\(.*\\)).*/\\1/' | tr "\\n" " "`""")
 
   new Reaktr()
