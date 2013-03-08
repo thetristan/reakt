@@ -26,11 +26,12 @@ module.exports = (path, command, options = {}) ->
       @log ""
       @log "Observing files in `#{path}` and running `#{command}` on changes"
       @log ""
-      @log "Include files matching: /#{include}/" if include?
-      @log "Exclude files matching: /#{exclude}/" if exclude?
+      @log "Include files matching: #{include}" if include?
+      @log "Exclude files matching: #{exclude}" if exclude?
 
-      @process = null
-      @startProcess = @processRestarter(@startProcess) if longRunning
+      if longRunning
+        @process = @startProcess()
+        @startProcess = @processRestarter(@startProcess)
 
       @onChange = after(2, @onChange)
 
@@ -68,17 +69,17 @@ module.exports = (path, command, options = {}) ->
     processRestarter: (startFn) ->
       =>
         @killProcess() if @process?
-        @process = startFn()
-        @process.on('exit', @onProcessExit)
+        @process.on 'exit', @onProcessExit(@process, startFn)
 
     killProcess: ->
       @log "Killing process with PID #{@process.pid}"
       @process.kill()
 
-    onProcessExit: (code = 0) =>
-      @log ""
-      @log "PID #{@process?.pid} exited with #{code}"
-      @log ""
-      @process = null
+    onProcessExit: (oldProcess, startFn) =>
+      (code = 0) =>
+        @log "PID #{oldProcess.pid} exited with #{code}"
+        @log ""
+        @process = startFn()
 
-  new Reaktr()
+
+  return new Reaktr

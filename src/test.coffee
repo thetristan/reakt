@@ -28,6 +28,7 @@ describe 'reakt', ->
     context 'when in long running mode', ->
       it 'wraps the #startProcess method with a #processRestarter', ->
         @createSubject(longRunning: true)
+        spy(@subject, 'startProcess').return()
         spy(@subject, 'processRestarter').return()
         expectedStartFn = @subject.startProcess
         @subject.start()
@@ -91,45 +92,15 @@ describe 'reakt', ->
       it 'returns null', ->
         equal @subject.parseFile('/foo/bar/ipsum/lorem'), null
 
-  describe '#processRestarter', ->
-    beforeEach ->
-      @createSubject(longRunning: true)
-      @subject.process = {}
-      spy(@subject, 'killProcess').return()
-
-      @onSpy = spy()
-      @startFnSpy = spy().return({on: @onSpy})
-
-      @handler = @subject.processRestarter(@startFnSpy)
-      @handler()
-
-    it 'kills the child if one exists', ->
-      expect @subject.killProcess.called
-
-    it 'calls startFn method', ->
-      expect @startFnSpy.called
-
-    it 'adds a listener to the newly created child', ->
-      [event, cb] = @onSpy.calledArgs[0]
-      equal event, 'exit'
-      equal cb, @subject.onProcessExit
-
   describe '#killProcess', ->
     it 'kills the process', ->
       @subject.process = kill: spy()
       @subject.killProcess()
       expect @subject.process.kill.called
 
-  describe '#onProcessExit', ->
-    it 'nullifies the process ref', ->
-      @subject.process = true
-      @subject.onProcessExit()
-      expect not @subject.process?
-
   describe '#startProcess', ->
     it 'spawns a child process', ->
-      onSpy = spy()
-      spy(child, 'spawn').return(on: onSpy)
+      spy(child, 'spawn').return()
       @subject.startProcess()
 
       [cmd, args, opts] = child.spawn.calledArgs[0]
@@ -137,5 +108,3 @@ describe 'reakt', ->
       equal args[0], '-c'
       equal args[1], 'ls ..'
       equal opts.stdio, 'inherit'
-
-  describe '#onChildExit', ->
