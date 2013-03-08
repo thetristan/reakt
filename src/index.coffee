@@ -69,13 +69,13 @@ module.exports = (path, command, options = {}) ->
     processRestarter: (startFn) ->
       =>
         @killProcess() if @process?
-        @process.on 'exit', @onProcessExit(@process)
+        @process.on 'exit', @onProcessExit(@process, startFn)
 
     killProcess: ->
       @log "Killing process with PID #{@process.pid}"
       @process.kill()
 
-    onProcessExit: (oldProcess) =>
+    onProcessExit: (oldProcess, startFn) =>
       (code = 0) =>
         @log "PID #{oldProcess.pid} exited with #{code}"
         @log ""
