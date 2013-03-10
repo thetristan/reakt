@@ -1,6 +1,6 @@
 watch = require('watch')
 childProcess = require('child_process')
-{after, wrap, map, flatten, compact, isString, keys} = require('underscore')
+_ = {wrap, map, flatten, compact, isString, keys} = require('underscore')
 
 LINE_PREFIX = "---"
 
@@ -33,6 +33,7 @@ module.exports = (path, command, options = {}) ->
         @process = @startProcess()
         @startProcess = @processRestarter(@startProcess)
 
+      {after} = _
       @onChange = after(2, @onChange)
 
       watch.watchTree(path, @onChange)
@@ -68,18 +69,15 @@ module.exports = (path, command, options = {}) ->
 
     processRestarter: (startFn) ->
       =>
-        @killProcess() if @process?
-        @process.on 'exit', @onProcessExit(@process, startFn)
-
-    killProcess: ->
-      @log "Killing process with PID #{@process.pid}"
-      @process.kill()
+        return @process = startFn() unless @process?
+        @log "Killing process with PID #{@process.pid}"
+        @process.on('exit', @onProcessExit(@process, startFn))
+        @process.kill()
 
     onProcessExit: (oldProcess, startFn) =>
       (code = 0) =>
         @log "PID #{oldProcess.pid} exited with #{code}"
         @log ""
         @process = startFn()
-
 
   return new Reaktr
