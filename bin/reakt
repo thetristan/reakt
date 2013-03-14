@@ -9,13 +9,15 @@ commander.version(package.version)
   .description('tool for observing file directories and reacting to changes')
   .option('-g, --grep [pattern]', 'run <command> when files matching [pattern] change')
   .option('-v, --invert [pattern]', 'do not run <command> if files matching [pattern] change')
+  .option('-i, --interval [milliseconds]', 'polling interval in ms - defaults to 1000ms')
   .parse(process.argv);
 
 var cwd = process.cwd();
 var command = commander.args.join(' ');
 var options = {
-  exclude: commander.invert,
-  include: commander.grep
+  exclude:  commander.invert,
+  include:  commander.grep,
+  interval: commander.interval
 };
 
 if (!command) {
