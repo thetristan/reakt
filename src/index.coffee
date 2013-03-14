@@ -65,16 +65,24 @@ module.exports = (path, command, options = {}) ->
     startProcess: =>
       @log "Running `#{command}`"
       @log ""
-      childProcess.spawn("sh", args, stdio: 'inherit')
+      child = childProcess.spawn("sh", args, stdio: 'inherit')
+      child.on('exit', @earlyProcessExit) if longRunning
+      child
+
+    earlyProcessExit: (code = 0) =>
+      @log ""
+      @log "PID #{@process.pid} exited early with #{code}"
+      @process = null
 
     processRestarter: (startFn) ->
       =>
         return @process = startFn() unless @process?
         @log "Killing process with PID #{@process.pid}"
-        @process.on('exit', @onProcessExit(@process, startFn))
+        @process.removeListener('exit', @earlyProcessExit)
+        @process.on('exit', @restartProcess(@process, startFn))
         @process.kill()
 
-    onProcessExit: (oldProcess, startFn) =>
+    restartProcess: (oldProcess, startFn) =>
       (code = 0) =>
         @log "PID #{oldProcess.pid} exited with #{code}"
         @log ""
