@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 var commander = require('commander');
+var package = require('../package.json');
 var reakt = require('../lib');
 
-commander.version('0.0.1')
+commander.version(package.version)
   .usage('[options] <command>')
   .description('tool for observing file directories and reacting to changes')
   .option('-g, --grep [pattern]', 'run <command> when files matching [pattern] change')
