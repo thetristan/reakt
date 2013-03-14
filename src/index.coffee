@@ -7,7 +7,7 @@ LINE_PREFIX = "---"
 compactMap = (arr, fn) -> compact(map(flatten(arr), fn))
 
 module.exports = (path, command, options = {}) ->
-  {longRunning, exclude, include} = options
+  {longRunning, interval, exclude, include} = options
 
   if include?
     include = RegExp(include)
@@ -19,6 +19,8 @@ module.exports = (path, command, options = {}) ->
 
   args = [command]
   args.unshift('-c')
+
+  interval ?= 1000
 
   class Reaktr
 
@@ -36,7 +38,7 @@ module.exports = (path, command, options = {}) ->
       {after} = _
       @onChange = after(2, @onChange)
 
-      watch.watchTree(path, @onChange)
+      watch.watchTree(path, {interval}, @onChange)
 
     log: (message) ->
       console.log("#{LINE_PREFIX} #{message}")

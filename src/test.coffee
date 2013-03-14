@@ -53,8 +53,9 @@ describe 'reakt', ->
       [times, cb] = _.after.calledArgs[0]
 
     it 'sets a watcher on the provided path', ->
-      [path, cb] = watch.watchTree.calledArgs[0]
+      [path, opts, cb] = watch.watchTree.calledArgs[0]
       equal path, "/foo/bar"
+      equal opts.interval, 1000
       equal cb, @subject.onChange
 
 
