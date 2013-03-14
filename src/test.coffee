@@ -57,7 +57,6 @@ describe 'reakt', ->
       equal path, "/foo/bar"
       equal cb, @subject.onChange
 
-
   describe '#onChange', ->
     beforeEach ->
       @fakeData = ['foo']
@@ -104,15 +103,30 @@ describe 'reakt', ->
         equal @subject.parseFile('/foo/bar/ipsum/lorem'), null
 
   describe '#startProcess', ->
-    it 'spawns a child process', ->
-      spy(child, 'spawn').return()
-      @subject.startProcess()
+    beforeEach ->
+      @subject = createSubject(longRunning: true)
+      @onSpy = spy()
+      spy(child, 'spawn').return
+        on: @onSpy
+      @result = @subject.startProcess()
 
+    it 'spawns a child process', ->
       [cmd, args, opts] = child.spawn.calledArgs[0]
       equal cmd, 'sh'
       equal args[0], '-c'
       equal args[1], 'ls ..'
       equal opts.stdio, 'inherit'
+
+    it 'registers an exit handler to the process when in long running mode', ->
+      [event, cb] = @result.on.calledArgs[0]
+      equal event, 'exit'
+      equal cb, @subject.earlyProcessExit
+
+  describe '#earlyProcessExit', ->
+    it 'removes the current process reference', ->
+      @subject.process = "foo"
+      @subject.earlyProcessExit()
+      equal @subject.process, null
 
   describe '#processRestarter', ->
     beforeEach ->
@@ -120,13 +134,20 @@ describe 'reakt', ->
       @result = @subject.processRestarter(@startFnSpy)
       @subject.process =
         on: spy()
+        removeListener: spy()
         kill : spy()
-      spy(@subject, 'onProcessExit').return('bar')
+      spy(@subject, 'earlyProcessExit')
+      spy(@subject, 'restartProcess').return('bar')
       @result()
 
     context 'with a running process', ->
-      it 'registers an exit handler on the process', ->
-        [event, cb] =  @subject.process.on.calledArgs[0]
+      it 'removes the early exit handler from the process', ->
+        [event, cb] = @subject.process.removeListener.calledArgs[0]
+        equal event, 'exit'
+        equal cb, @subject.earlyProcessExit
+
+      it 'registers an exit handler to the process', ->
+        [event, cb] = @subject.process.on.calledArgs[0]
         equal event, 'exit'
         equal cb, 'bar'
 
@@ -139,10 +160,10 @@ describe 'reakt', ->
         @result()
         equal @subject.process, 'foo'
 
-  describe '#onProcessExit', ->
+  describe '#restartProcess', ->
     beforeEach ->
       @startFnSpy = spy().return('foo')
-      @result = @subject.onProcessExit({}, @startFnSpy)
+      @result = @subject.restartProcess({}, @startFnSpy)
       @result()
 
     it 'starts the process', ->
