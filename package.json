@@ -2,6 +2,7 @@
 , "name": "reakt"
 , "description": "A tool for observing file trees and acting on changes"
 , "version": "0.0.4"
+, "license": "MIT"
 , "repository":
   { "type": "git"
   , "url": "https://github.com/thetristan/reakt"
