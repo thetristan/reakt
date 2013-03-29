@@ -90,7 +90,7 @@ describe 'reakt', ->
 
   describe '#parseFile', ->
     beforeEach ->
-      @subject = createSubject(include: "(baz\/qux|lorem\/ipsum)", exclude: "ipsum\/lorem")
+      @subject = createSubject(include: "/(baz\/qux|lorem\/ipsum)/", exclude: "/ipsum\/lorem/")
 
     it 'strips the base path', ->
       equal @subject.parseFile('/foo/bar/baz/qux'), '/baz/qux'

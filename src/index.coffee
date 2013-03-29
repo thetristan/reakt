@@ -6,14 +6,21 @@ LINE_PREFIX = "---"
 
 compactMap = (arr, fn) -> compact(map(flatten(arr), fn))
 
+isRegExp = (str) ->
+  first = str.substring(0,1)
+  last = str.substring(str.length-1)
+  first == last == '/'
+
 module.exports = (path, command, options = {}) ->
   {longRunning, interval, exclude, include} = options
 
-  if include?
+  if include? and isRegExp(include)
+    include = include.substring(1,include.length-1)
     include = RegExp(include)
     notIncluded = -> not include.test.apply(include, arguments)
 
-  if exclude?
+  if exclude? and isRegExp(exclude)
+    exclude = exclude.substring(1,exclude.length-1)
     exclude = RegExp(exclude)
     excluded = -> exclude.test.apply(exclude, arguments)
 
