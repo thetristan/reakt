@@ -12,8 +12,8 @@ $ reaktd [options] <command>
 
     -h, --help                     output usage information
     -V, --version                  output the version number
-    -g, --grep [pattern]           run <command> when files matching [pattern] change
-    -v, --invert [pattern]         do not run <command> if files matching [pattern] change
+    -g, --grep [regex]             run <command> when files matching [regex] change (see below)
+    -v, --invert [regex]           do not run <command> if files matching [regex] change (see below)
     -i, --interval [milliseconds]  polling interval in ms - defaults to 1000ms
 ```
 
@@ -25,3 +25,17 @@ $ reakt -g "^\/src" make test
 $ reaktd ./start_server.sh
 ```
 
+### Regex
+
+Currently `--grep` and `--invert` only accept regex patterns. Internally, these are converted into RegExp:
+
+```javascript
+var includeRegExp = RegExp(grep);
+var excludeRegExp = RegExp(invert);
+```
+
+Support for file globbing will be added soon.
+
+### License
+
+MIT
