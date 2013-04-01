@@ -12,8 +12,8 @@ $ reaktd [options] <command>
 
     -h, --help                     output usage information
     -V, --version                  output the version number
-    -g, --grep [regex]             run <command> when files matching [regex] change (see below)
-    -v, --invert [regex]           do not run <command> if files matching [regex] change (see below)
+    -g, --grep [pattern|regexp]    run <command> when files matching [pattern|regexp] change (see below)
+    -v, --invert [pattern|regexp]  do not run <command> if files matching [pattern|regexp] change (see below)
     -i, --interval [milliseconds]  polling interval in ms - defaults to 1000ms
 ```
 
@@ -21,20 +21,32 @@ $ reaktd [options] <command>
 ```
 $ reakt say "files updated"
 $ reakt coffee -c src/foo.coffee -o lib
-$ reakt -g "^\/src" make test
+$ reakt -g "src/*.coffee" "make && make test"
+$ reakt -g "/^src/" foo
 $ reaktd ./start_server.sh
 ```
 
-### Regex
+### Patterns/RegExp
 
-Currently `--grep` and `--invert` only accept regex patterns. Internally, these are converted into RegExp:
+Currently `--grep` and `--invert` accept file glob or regex patterns.
+
+##### Globs
+
+All patterns are re-expanded on every file change to ensure new files matching the glob are watched. Internally, reakt uses (node-glob)[https://github.com/isaacs/node-glob] to handle expanding globs:
 
 ```javascript
-var includeRegExp = RegExp(grep);
-var excludeRegExp = RegExp(invert);
+// $ reakt -g "src/*.coffee" bar
+var includePattern = glob.sync("src/*.coffee")
 ```
 
-Support for file globbing will be added soon.
+##### RegExp
+
+If the patterns you specify begin and end with a '/', they will be converted into RegExps internally:
+
+```javascript
+// $ reakt -g "/^src/" foo
+var includeRegExp = RegExp("/^src/");
+```
 
 ### License
 
