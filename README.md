@@ -32,7 +32,7 @@ Currently `--grep` and `--invert` accept file glob or regex patterns.
 
 ##### Globs
 
-All patterns are re-expanded on every file change to ensure new files matching the glob are watched. Internally, reakt uses (node-glob)[https://github.com/isaacs/node-glob] to handle expanding globs:
+All patterns are re-expanded on every file change to ensure new files matching the glob are watched. Internally, reakt uses [node-glob](https://github.com/isaacs/node-glob) to handle expanding globs:
 
 ```javascript
 // $ reakt -g "src/*.coffee" bar
