@@ -1,6 +1,7 @@
 {ok: expect, equal} = require('assert')
 spy   = require('bondjs')
 
+glob  = require('glob')
 child = require('child_process')
 watch = require('watch')
 _     = require('underscore')
@@ -89,19 +90,35 @@ describe 'reakt', ->
         equal result[0], 'foo'
 
   describe '#parseFile', ->
-    beforeEach ->
-      @subject = createSubject(include: "/(baz\/qux|lorem\/ipsum)/", exclude: "/ipsum\/lorem/")
-
     it 'strips the base path', ->
-      equal @subject.parseFile('/foo/bar/baz/qux'), '/baz/qux'
+      @subject = createSubject()
+      equal @subject.parseFile('/foo/bar/baz/test.js'), 'baz/test.js'
 
-    context 'if the file does not match the include pattern', ->
-      it 'returns null', ->
-        equal @subject.parseFile('/foo/bar/foo/ipsum'), null
+    context 'with a regex', ->
+      beforeEach ->
+        @subject = createSubject(include: "/(baz\/qux|lorem\/ipsum)/", exclude: "/ipsum\/lorem/")
 
-    context 'if the file matches the exclude pattern', ->
-      it 'returns null', ->
-        equal @subject.parseFile('/foo/bar/ipsum/lorem'), null
+      context 'if the file does not match the include pattern', ->
+        it 'returns null', ->
+          equal @subject.parseFile('/foo/bar/foo/ipsum'), null
+
+      context 'if the file matches the exclude pattern', ->
+        it 'returns null', ->
+          equal @subject.parseFile('/foo/bar/ipsum/lorem'), null
+
+    context 'with a glob pattern', ->
+      beforeEach ->
+        @subject = createSubject(include: "/baz/*.js", exclude: "/baz/qux/*.js")
+
+      context 'if the file does not match the include pattern', ->
+        it 'returns null', ->
+          spy(glob, 'sync').return(['/baz/lorem.js'])
+          equal @subject.parseFile('/foo/bar/baz/ipsum.js'), null
+
+      context 'if the file matches the exclude pattern', ->
+        it 'returns null', ->
+          spy(glob, 'sync').return(['/baz/qux/lorem.js'])
+          equal @subject.parseFile('/foo/bar/baz/qux/lorem.js'), null
 
   describe '#startProcess', ->
     beforeEach ->
