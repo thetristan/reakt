@@ -45,7 +45,7 @@ If the patterns you specify begin and end with a '/', they will be converted int
 
 ```javascript
 // $ reakt -g "/^src/" foo
-var includeRegExp = RegExp("/^src/");
+var includeRegExp = RegExp("^src");
 ```
 
 ### License
