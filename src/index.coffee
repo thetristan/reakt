@@ -1,7 +1,8 @@
 glob = require('glob')
 watch = require('watch')
 childProcess = require('child_process')
-_ = {wrap, map, flatten, compact, isString, keys} = require('underscore')
+_ = require('underscore')
+{identity, wrap, map, flatten, compact, isString, keys} = _
 
 LINE_PREFIX = "---"
 
@@ -12,28 +13,29 @@ isRegExp = (str) ->
   last = str.substring(str.length-1)
   first == last == '/'
 
+createRegExpFilter = (filter) ->
+  filter = filter.substring(1, filter.length-1)
+  filter = RegExp(filter)
+  (file) -> filter.test(file)
+
+createGlobFilter = (filter) ->
+  (file) -> file in glob.sync(filter)
+
+createFilter = (filter) ->
+  if isRegExp(filter)
+    createRegExpFilter(filter)
+  else
+    createGlobFilter(filter)
+
+invert = (fn) ->
+  -> not fn(arguments)
+
 module.exports = (path, command, options = {}) ->
   {longRunning, interval, exclude, include} = options
 
-  if include?
-    if isRegExp(include)
-      include = include.substring(1,include.length-1)
-      include = RegExp(include)
-      notIncluded = -> not include.test.apply(include, arguments)
-    else
-      notIncluded = (file) -> not (file in glob.sync(include))
-
-  if exclude?
-    if isRegExp(exclude)
-      exclude = exclude.substring(1,exclude.length-1)
-      exclude = RegExp(exclude)
-      excluded = -> exclude.test.apply(exclude, arguments)
-    else
-      excluded = (file) -> file in glob.sync(exclude)
-
-  args = [command]
-  args.unshift('-c')
-
+  notIncluded = invert(createFilter(include)) if include?
+  excluded = createFilter(exclude) if exclude?
+  args = ['-c', command]
   interval ?= 1000
 
   class Reaktr
