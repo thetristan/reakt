@@ -27,13 +27,10 @@ createFilter = (filter) ->
   else
     createGlobFilter(filter)
 
-invert = (fn) ->
-  -> not fn(arguments)
-
 module.exports = (path, command, options = {}) ->
   {longRunning, interval, exclude, include} = options
 
-  notIncluded = invert(createFilter(include)) if include?
+  included = createFilter(include) if include?
   excluded = createFilter(exclude) if exclude?
   args = ['-c', command]
   interval ?= 1000
@@ -76,7 +73,7 @@ module.exports = (path, command, options = {}) ->
 
     parseFile: (file) ->
       file = file.replace("#{path}/",'') || '/'
-      file = null if notIncluded?(file)
+      file = null if not included?(file)
       file = null if excluded?(file)
       file
 
