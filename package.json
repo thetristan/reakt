@@ -1,27 +1,30 @@
-{ "author": "Tristan Blease"
-, "name": "reakt"
-, "description": "A tool for observing file trees and acting on changes"
-, "version": "0.0.5"
-, "license": "MIT"
-, "repository":
-  { "type": "git"
-  , "url": "https://github.com/thetristan/reakt"
+{
+  "author": "Tristan Blease",
+  "name": "reakt",
+  "description": "A tool for observing file trees and acting on changes",
+  "version": "0.0.5",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thetristan/reakt"
+  },
+  "bin": {
+    "reakt": "./bin/reakt",
+    "reaktd": "./bin/reaktd"
+  },
+  "dependencies": {
+    "watch": "~0.16.0",
+    "underscore": "~1.4.4",
+    "glob": "*",
+    "commander": "*"
+  },
+  "devDependencies": {
+    "coffee-script": "~1.4.0",
+    "mocha": "~1.8.1",
+    "bondjs": "0.0.11"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
   }
-, "bin":
-  { "reakt": "./bin/reakt"
-  , "reaktd": "./bin/reaktd"
-  }
-, "dependencies":
-  { "watch": "~0.5.1"
-  , "underscore": "~1.4.4"
-  , "glob": "*"
-  , "commander": "*"
-  }
-, "devDependencies":
-  { "coffee-script": "~1.4.0"
-  , "mocha": "~1.8.1"
-  , "bondjs": "0.0.11"
-  }
-, "optionalDependencies": {}
-, "engines": { "node": "*" }
 }
