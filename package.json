@@ -9,7 +9,7 @@
     "url": "https://github.com/thetristan/reakt"
   },
   "bin": {
-    "reakt": "./bin/reakt",
+    "reakt": "./bin/reakt"
   },
   "dependencies": {
     "commander": "~2.8.1",
