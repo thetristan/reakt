@@ -10,7 +10,6 @@
   },
   "bin": {
     "reakt": "./bin/reakt",
-    "reaktd": "./bin/reaktd"
   },
   "dependencies": {
     "commander": "~2.8.1",
