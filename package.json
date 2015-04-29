@@ -13,10 +13,10 @@
     "reaktd": "./bin/reaktd"
   },
   "dependencies": {
-    "watch": "~0.16.0",
-    "underscore": "~1.4.4",
-    "glob": "*",
-    "commander": "*"
+    "commander": "~2.8.1",
+    "gaze": "~0.5.1",
+    "minimatch": "~2.0.4",
+    "lodash": "~3.7.0"
   },
   "devDependencies": {
     "coffee-script": "~1.4.0",
