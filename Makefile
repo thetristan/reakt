@@ -9,4 +9,4 @@ lib/%.js : src/%.coffee
 .PHONY: test
 
 test : $(JS)
-	./node_modules/.bin/mocha --recursive lib
+	./node_modules/.bin/mocha lib
